@@ -1,208 +1,226 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MCODE</title>
+<title>M2.encrypt</title>
+<link rel="stylesheet" href="styles.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&display=swap');
-*{box-sizing:border-box;}
-body{margin:0;background:#0b0b0b;color:#f2f2f2;font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;}
-header{text-align:center;font-weight:900;font-size:3rem;padding:28px 0;border-bottom:1px solid #222;letter-spacing:0.35em;color:#0ff;user-select:none;}
-.container{max-width:900px;margin:40px auto;padding:30px;background:#111;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,0.8);display:flex;flex-direction:column;gap:20px;}
-.password-row{display:flex;align-items:center;gap:16px;font-weight:600;font-size:0.9rem;color:#0ff;user-select:none;}
-.password-row span{min-width:120px;}
-.password-row input[type="password"],.password-row input[type="text"]{flex-grow:1;background:#000;border:1.5px solid #222;color:#0ff;padding:10px 14px;border-radius:10px;font-family:'Fira Mono',monospace;font-size:16px;outline:none;transition:border-color 0.3s ease;}
-.password-row input:focus{border-color:#0ff;box-shadow:0 0 10px #0ff88caa;}
-.show-pass{font-size:0.85rem;cursor:pointer;user-select:none;color:#0ff;opacity:0.7;transition:opacity 0.3s ease;}
-.show-pass:hover{opacity:1;}
-textarea{width:100%;height:180px;background:#000;border:1.5px solid #222;border-radius:14px;padding:18px 20px;font-family:'Fira Mono',monospace;font-size:16px;color:#0ff;resize:vertical;outline:none;box-shadow:inset 0 0 18px #000000cc;transition:border-color 0.3s ease, box-shadow 0.3s ease;}
-textarea::placeholder{color:#008080aa;font-style:italic;}
-textarea:focus{border-color:#0ff;box-shadow:0 0 20px #0ff88caa, inset 0 0 25px #0ff88c88;}
-.buttons{display:flex;justify-content:center;gap:40px;margin-top:4px;}
-button{min-width:140px;padding:14px 0;border-radius:9999px;font-size:16px;font-weight:700;cursor:pointer;border:none;user-select:none;transition:all 0.3s ease;box-shadow:0 5px 15px rgba(0,255,255,0.35);}
-button:active{transform:scale(0.96);}
-.encode{background:#000;color:#0ff;border:2px solid #0ff;text-transform:uppercase;letter-spacing:0.15em;box-shadow:0 0 15px #0ffccff7;}
-.encode:hover{background:#0ff;color:#000;box-shadow:0 0 25px #0ff;}
-.decode{background:#fff;color:#000;border:2px solid #0ff;text-transform:uppercase;letter-spacing:0.15em;box-shadow:0 0 15px #0ffccff7;}
-.decode:hover{background:#0ff;color:#000;box-shadow:0 0 25px #0ff;}
-.error-msg{color:#ff5555;font-weight:700;text-align:center;margin-top:10px;user-select:none;font-family:monospace;letter-spacing:0.1em;}
-@media(max-width:600px){.buttons{flex-direction:column;gap:16px;}button{width:100%;min-width:unset;}}
 
-/* Entry overlay */
-#entryOverlay{
-  position:fixed;top:0;left:0;width:100%;height:100%;background:#0b0b0b;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family:'Inter',system-ui; background:#0b0b0b; color:#fff; }
+
+/* Neon header, subtle white glow */
+header {
+  text-align:center;
+  font-weight:900;
+  font-size:3rem;
+  padding:28px 0;
+  color:#fff;
+  text-shadow: 0 0 3px #fff, 0 0 6px #fff, 0 0 10px #fff;
 }
-#entryOverlay h2{color:#0ff;font-family:'Fira Mono',monospace;font-size:2rem;margin-bottom:20px;letter-spacing:0.2em;}
-#entryOverlay input{width:280px;padding:14px 16px;border-radius:10px;border:1.5px solid #222;background:#000;color:#0ff;font-size:16px;outline:none;font-family:'Fira Mono',monospace;margin-bottom:14px;}
-#entryOverlay button{padding:12px 20px;border-radius:999px;font-weight:700;border:2px solid #0ff;background:#000;color:#0ff;cursor:pointer;transition:all 0.3s ease;box-shadow:0 0 12px #0ff;}
-#entryOverlay button:hover{background:#0ff;color:#000;box-shadow:0 0 20px #0ff;}
-#entryError{color:#ff5555;font-family:monospace;margin-top:8px;}
+
+/* Container with subtle white backglow */
+.container {
+  max-width:900px;
+  margin:40px auto;
+  padding:30px;
+  background:#111;
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  /* subtle white glow/backlight */
+  box-shadow: 0 0 15px rgba(255,255,255,0.12), 0 0 30px rgba(255,255,255,0.08);
+}
+
+.password-row { display:flex; align-items:center; gap:16px; font-size:0.9rem; color:#fff; }
+.password-row span { min-width:120px; }
+.password-row input {
+  flex-grow:1;
+  background:#000;
+  border:1.5px solid transparent;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:12px;
+  font-family:'Fira Mono',monospace;
+  transition: all 0.3s ease;
+}
+.password-row input:hover,
+.password-row input:focus {
+  border-color:#fff;
+  box-shadow:0 0 8px #fff55;
+}
+
+.show-pass { font-size:0.85rem; cursor:pointer; opacity:.7; user-select:none; }
+
+textarea {
+  width:100%;
+  height:180px;
+  background:#000;
+  border:1.5px solid transparent;
+  border-radius:14px;
+  padding:18px;
+  font-family:'Fira Mono',monospace;
+  color:#fff;
+  resize:vertical;
+  outline:none;
+  transition: all 0.3s ease;
+}
+textarea:hover,
+textarea:focus {
+  border-color:#fff;
+  box-shadow:0 0 10px #fff55;
+}
+
+.buttons { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:5px; }
+
+button {
+  min-width:160px;
+  padding:14px;
+  border-radius:9999px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  border:2px solid #fff;
+  position:relative;
+  overflow:hidden;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  font-family:'Fira Mono',monospace;
+  background: linear-gradient(to right, #000 50%, #fff 50%);
+  color: transparent;
+}
+
+/* Split text */
+#modeBtn span {
+  display:inline-block;
+  background: linear-gradient(to right, #fff 50%, #000 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight:bold;
+}
+
+/* Hover: subtle white neon glow on button */
+#modeBtn:hover {
+  box-shadow: 0 0 6px #fff, 0 0 12px #fff inset;
+}
+#modeBtn:hover span {
+  background: linear-gradient(to right, #fff 50%, #000 50%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+#errorMsg { color:#ff5555; font-weight:700; text-align:center; font-family:monospace; margin-top:6px; }
 </style>
 </head>
 <body>
 
-<div id="entryOverlay">
-  <h2>ENTER SITE PASSWORD</h2>
-  <input type="password" id="sitePassword" placeholder="Entry Password" autocomplete="off"/>
-  <button onclick="checkEntry()">ENTER</button>
-  <div id="entryError"></div>
-</div>
-
-<header>MCODE</header>
+<header>M2.encrypt</header>
 
 <div class="container">
 
   <div class="password-row">
-    <span>Encode Password:</span>
-    <input type="password" id="password" placeholder="Required" autocomplete="off" />
-    <label class="show-pass" title="Show/hide encode password">
-      <input type="checkbox" onclick="togglePass()" /> show
+    <span>Password:</span>
+    <input type="password" id="password" placeholder="Enter Password Here!">
+    <label class="show-pass">
+      <input type="checkbox" onclick="togglePass()"> show
     </label>
   </div>
 
   <textarea id="input" placeholder="Enter text here..."></textarea>
 
   <div class="buttons">
-    <button class="encode" onclick="encode()">Encode</button>
-    <button class="decode" onclick="decode()">Decode</button>
+    <button id="modeBtn" onclick="switchMode()">
+      <span>MODE: M2.ENCRYPT</span>
+    </button>
   </div>
 
   <textarea id="output" placeholder="Output will appear here..." readonly></textarea>
-
-  <div id="errorMsg" class="error-msg"></div>
+  <div id="errorMsg"></div>
 
 </div>
 
 <script>
-// ----- Entry Password Overlay -----
-const ENTRY_PASSWORD = 'MC64';
-const entryOverlay = document.getElementById('entryOverlay');
-const entryError = document.getElementById('entryError');
-
-function checkEntry(){
-  const val = document.getElementById('sitePassword').value.trim();
-  if(val === ENTRY_PASSWORD){
-    localStorage.setItem('entryOk', 'true');
-    entryOverlay.style.display = 'none';
-  }else{
-    entryError.textContent = 'Wrong entry password!';
-  }
-}
-
-window.addEventListener('load',()=>{
-  if(localStorage.getItem('entryOk') === 'true'){
-    entryOverlay.style.display = 'none';
-  }
-});
-
-// Toggle encode password visibility
+// ================= UI =================
+let useEncrypt = true; // true = M2.ENCRYPT (AES), false = M2.ENCODE (short Base64)
 function togglePass(){
-  const p = document.getElementById('password');
-  p.type = (p.type === "password") ? "text" : "password";
+  const p=document.getElementById("password");
+  p.type = p.type==="password" ? "text" : "password";
 }
-
-// ---- Ciphers ----
-const caesar = (str, shift) => str.replace(/[a-zA-Z]/g, c=>{
-  const base = c <= 'Z' ? 65 : 97;
-  return String.fromCharCode((c.charCodeAt(0) - base + shift + 26) % 26 + base);
-});
-
-function vigenere(str,key,decode=false){
-  if(!key) return str;
-  let j=0; const kLen=key.length;
-  return str.replace(/[a-zA-Z]/g,c=>{
-    let k=key[j++%kLen].toLowerCase().charCodeAt(0)-97;
-    if(decode) k=26-k;
-    const base=c<='Z'?65:97;
-    return String.fromCharCode((c.charCodeAt(0)-base+k)%26+base);
-  });
+function switchMode(){
+  useEncrypt = !useEncrypt;
+  const btnSpan = document.querySelector("#modeBtn span");
+  btnSpan.textContent = useEncrypt ? "MODE: M2.ENCRYPT" : "MODE: M2.ENCODE";
+  autoProcess();
 }
+const input = document.getElementById("input");
+const output = document.getElementById("output");
 
-function xorCipher(str,key){
-  if(!key) return str;
-  let out=''; for(let i=0;i<str.length;i++) out+=String.fromCharCode(str.charCodeAt(i)^key.charCodeAt(i%key.length));
-  return out;
+// ================= CRYPTO =================
+const SIGNATURE="MCODEv2";
+const ITER=300000;
+const enc=new TextEncoder();
+const dec=new TextDecoder();
+const b64e=u8=>btoa(String.fromCharCode(...u8));
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(p,salt){
+  const base=await crypto.subtle.importKey("raw",enc.encode(p+SIGNATURE),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:ITER,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
 }
+function pack(...arrs){let len=arrs.reduce((a,b)=>a+b.length,0),o=0,out=new Uint8Array(len);for(const a of arrs){out.set(a,o);o+=a.length;}return out;}
 
-function shuffle(str){ let out=''; for(let i=0;i<str.length;i++) out+=String.fromCharCode((str.charCodeAt(i)+(i%7))%256); return out; }
-function unshuffle(str){ let out=''; for(let i=0;i<str.length;i++) out+=String.fromCharCode((str.charCodeAt(i)-(i%7)+256)%256); return out; }
-
-function utf8ToBase64(str){
-  const encoder=new TextEncoder(); const bytes=encoder.encode(str); let binary=''; for(const b of bytes) binary+=String.fromCharCode(b); return btoa(binary);
-}
-function base64ToUtf8(b64){
-  const binary=atob(b64); const bytes=new Uint8Array(binary.length); for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i); const decoder=new TextDecoder(); return decoder.decode(bytes);
-}
-
-// ----- Encode/Decode -----
-function clearError(){document.getElementById('errorMsg').textContent='';}
-
-function encode(){
-  clearError();
-  let pass=document.getElementById('password').value.trim();
-  if(!pass){document.getElementById('errorMsg').textContent='Password is required!'; return;}
-  let text=document.getElementById('input').value;
-
-  let data=utf8ToBase64(text);
-  // Layer 1
-  data=caesar(data,8);
-  data=vigenere(data,pass);
-  data=xorCipher(data,pass);
-  // Layer 2
-  data=shuffle(data);
-  const revPass=pass.split('').reverse().join('');
-  data=xorCipher(data,revPass);
-  data=vigenere(data,revPass);
-
-  // Final base64 + Caesar(2+3)
-  data=btoa(data);
-  data=caesar(data,2);
-  data=caesar(data,3);
-
-  const output=document.getElementById('output');
-  output.value=data;
-  output.style.color="#0ff"; // normal color
-}
-
-function decode(){
-  clearError();
-  let pass=document.getElementById('password').value.trim();
-  if(!pass){document.getElementById('errorMsg').textContent='Password is required!'; return;}
-
-  let text=document.getElementById('input').value.trim();
-  if(!text){document.getElementById('output').value=''; return;}
-
+// ================= FULL AES =================
+async function encryptFull(text, pass){
   try{
-    text=caesar(text,-3);
-    text=caesar(text,-2);
-    text=atob(text);
+    const salt=crypto.getRandomValues(new Uint8Array(16));
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const key=await deriveKey(pass,salt);
+    const data=enc.encode(SIGNATURE+"::"+text);
+    const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,data);
+    return "M2."+b64e(pack(enc.encode(SIGNATURE),salt,iv,new Uint8Array(cipher)));
+  }catch{return "M2."+b64e(enc.encode(text));}
+}
+async function decryptFull(text, pass){
+  try{
+    let raw=b64d(text.slice(3));
+    const sig=dec.decode(raw.slice(0,SIGNATURE.length));
+    const salt=raw.slice(SIGNATURE.length,SIGNATURE.length+16);
+    const iv=raw.slice(SIGNATURE.length+16,SIGNATURE.length+28);
+    const data=raw.slice(SIGNATURE.length+28);
+    const key=await deriveKey(pass,salt);
+    const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,data);
+    const txt=dec.decode(plain);
+    return txt.startsWith(SIGNATURE+"::") ? txt.slice(SIGNATURE.length+2) : txt;
+  }catch{return text;}
+}
 
-    const revPass=pass.split('').reverse().join('');
-    text=vigenere(text,revPass,true);
-    text=xorCipher(text,revPass);
-    text=unshuffle(text);
-    text=xorCipher(text,pass);
-    text=vigenere(text,pass,true);
-    text=caesar(text,-8);
+// ================= SHORT BASE64 =================
+function b64urlEncode(b64){return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function b64urlDecode(s){let str=s.replace(/-/g,'+').replace(/_/g,'/');while(str.length%4)str+='=';return b64d(str);}
+function encodeShort(text){return "M2."+b64urlEncode(b64e(enc.encode(text)));}
+function decodeShort(text){try{const raw=b64urlDecode(text.slice(3));return dec.decode(raw);}catch{return text;}}
 
-    text=base64ToUtf8(text);
+// ================= AUTO PROCESS =================
+async function autoProcess(){
+  const text = input.value || "";
+  const pass = document.getElementById("password").value || "";
+  if(!text){ output.value=""; return; }
 
-    const output=document.getElementById('output');
-    output.value=text;
-
-    // Simple gibberish detection: if mostly non-printable → red
-    const nonPrintable=text.replace(/[\x20-\x7E]/g,'').length;
-    const ratio=nonPrintable/text.length;
-    output.style.color=(ratio>0.25) ? '#ff5555' : '#0ff';
-
-  }catch{
-    // fallback in case of severe corruption
-    const output=document.getElementById('output');
-    output.value=text;
-    output.style.color='#ff5555';
+  if(text.startsWith("M2.")){
+    if(useEncrypt) output.value = await decryptFull(text, pass);
+    else output.value = decodeShort(text);
+  } else {
+    if(useEncrypt) output.value = await encryptFull(text, pass);
+    else output.value = encodeShort(text);
   }
 }
+input.addEventListener("input", autoProcess);
+document.getElementById("password").addEventListener("input", autoProcess);
 </script>
+
 </body>
 </html>
