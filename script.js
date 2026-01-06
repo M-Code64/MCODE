@@ -1,126 +1,138 @@
+<script>
+// ================= ENTRY LOCK =================
+const ENTRY_PASSWORD = "MC64";
+const entryOverlay = document.getElementById("entryOverlay");
+const entryError = document.getElementById("entryError");
+
+function checkEntry(){
+  if(document.getElementById("sitePassword").value === ENTRY_PASSWORD){
+    localStorage.setItem("entryOk","1");
+    entryOverlay.style.display="none";
+  } else { entryError.textContent="Wrong entry password!"; }
+}
+
+window.onload=()=>{ 
+  if(localStorage.getItem("entryOk")) entryOverlay.style.display="none"; 
+};
+
+// ================= UI =================
 function togglePass(){
-  password.type = password.type === "password" ? "text" : "password";
+  const p=document.getElementById("password");
+  p.type=p.type==="password"?"text":"password";
 }
 
-// ROT13
-const rot13 = s => s.replace(/[a-zA-Z]/g,c=>{
-  let n=c.charCodeAt(0)+13;
-  return String.fromCharCode((c<="Z"?90:122)>=n?n:n-26);
-});
+const input=document.getElementById("input");
+const output=document.getElementById("output");
+const errorMsg=document.getElementById("errorMsg");
 
-// Caesar
-const caesar = (s,n) => s.replace(/[a-zA-Z]/g,c=>{
-  let b=c<="Z"?65:97;
-  return String.fromCharCode((c.charCodeAt(0)-b+n+26)%26+b);
-});
+// ================= CRYPTO =================
+const SIGNATURE="MCODEv2";
+const ITER=300000;
+const enc=new TextEncoder();
+const dec=new TextDecoder();
 
-// Vigenere
-function vigenere(str,key,dec=false){
-  if(!key) return str;
-  let j=0;
-  return str.replace(/[a-zA-Z]/g,c=>{
-    let k=key[j++%key.length].toLowerCase().charCodeAt(0)-97;
-    if(dec) k=26-k;
-    let b=c<="Z"?65:97;
-    return String.fromCharCode((c.charCodeAt(0)-b+k)%26+b);
-  });
+const b64e=u8=>btoa(String.fromCharCode(...u8));
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+
+function pack(...arrs){
+  let len=arrs.reduce((a,b)=>a+b.length,0), o=0, out=new Uint8Array(len);
+  for(const a of arrs){ out.set(a,o); o+=a.length; }
+  return out;
 }
 
-// XOR
-function xorCipher(str,key){
-  if(!key) return str;
-  let o="";
-  for(let i=0;i<str.length;i++)
-    o+=String.fromCharCode(str.charCodeAt(i)^key.charCodeAt(i%key.length));
-  return o;
+async function deriveKey(p,salt){
+  const base=await crypto.subtle.importKey(
+    "raw", enc.encode(p+SIGNATURE), "PBKDF2", false, ["deriveKey"]
+  );
+  return crypto.subtle.deriveKey(
+    {name:"PBKDF2", salt, iterations:ITER, hash:"SHA-256"},
+    base, {name:"AES-GCM", length:256}, false, ["encrypt","decrypt"]
+  );
 }
 
-// Shuffle
-const shuffle=s=>[...s].map((c,i)=>String.fromCharCode((c.charCodeAt(0)+(i%7))%256)).join("");
-const unshuffle=s=>[...s].map((c,i)=>String.fromCharCode((c.charCodeAt(0)-(i%7)+256)%256)).join("");
+// ================= SHORT B64URL =================
+const M2="M2";
+const b64url=b64=>b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64urld=b64=>{
+  let s=b64.replace(/-/g,'+').replace(/_/g,'/');
+  while(s.length%4) s+='=';
+  return b64d(s);
+}
 
-// Base32
-const b32="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-const b32e=s=>{
-  let bits="",o="";
-  for(let c of s) bits+=c.charCodeAt(0).toString(2).padStart(8,"0");
-  for(let i=0;i<bits.length;i+=5)
-    o+=b32[parseInt(bits.substr(i,5).padEnd(5,"0"),2)];
-  return o;
-};
-const b32d=s=>{
-  let bits="",o="";
-  for(let c of s) bits+=b32.indexOf(c).toString(2).padStart(5,"0");
-  for(let i=0;i<bits.length;i+=8){
-    let b=bits.substr(i,8);
-    if(b.length===8) o+=String.fromCharCode(parseInt(b,2));
+// ================= ENCRYPT / DECRYPT =================
+async function encrypt(){
+  errorMsg.textContent="";
+  if(!password.value){ errorMsg.textContent="Password required"; return; }
+
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(password.value,salt);
+
+  const data=enc.encode(SIGNATURE+"::"+input.value);
+  const cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},key,data);
+
+  const full=b64e(pack(salt,iv,new Uint8Array(cipher)));
+  output.value=M2+"."+b64url(full);
+  output.style.color="#0ff";
+}
+
+async function decrypt(){
+  errorMsg.textContent="";
+  if(!password.value){ errorMsg.textContent="Password required"; return; }
+  if(!input.value){ output.value=""; return; }
+
+  try{
+    const str=input.value.trim();
+    if(!str.startsWith(M2+'.')) throw "INVALID DATA";
+
+    const raw=b64urld(str.slice(M2.length+1));
+
+    if(raw.length>32){ // AES-GCM (salt+iv+cipher)
+      const salt=raw.slice(0,16);
+      const iv=raw.slice(16,28);
+      const data=raw.slice(28);
+
+      const key=await deriveKey(password.value,salt);
+      const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv},key,data);
+      const txt=dec.decode(plain);
+
+      if(!txt.startsWith(SIGNATURE+"::")) throw 0;
+      output.value=txt.slice(SIGNATURE.length+2);
+      output.style.color="#0ff";
+
+    } else { // short M2 encoded
+      output.value=dec.decode(raw);
+      output.style.color="#0ff";
+    }
+
+  }catch{
+    output.value="❌ WRONG PASSWORD OR INVALID DATA";
+    output.style.color="#ff5555";
   }
-  return o;
-};
-
-// Morse / MCODE (formerly MC64)
-const morse={A:".-",B:"-...",C:"-.-.",D:"-..",E:".",F:"..-.",G:"--.",H:"....",
-I:"..",J:".---",K:"-.-",L:".-..",M:"--",N:"-.",O:"---",P:".--.",
-Q:"--.-",R:".-.",S:"...",T:"-",U:"..-",V:"...-",W:".--",
-X:"-..-",Y:"-.--",Z:"--..",0:"-----",1:".----",2:"..---",3:"...--",
-4:"....-",5:".....",6:"-....",7:"--...",8:"---..",9:"----."};
-
-const rev=Object.fromEntries(Object.entries(morse).map(([k,v])=>[v,k]));
-const t2m=t=>t.toUpperCase().split(" ").map(w=>w.split("").map(c=>morse[c]||"").join(" ")).join(" / ");
-const m2t=m=>m.split(" / ").map(w=>w.split(" ").map(c=>rev[c]||"").join("")).join(" ");
-
-function mcodeEncode(d){
-  d=t2m(d); d=btoa(d); d=b32e(d);
-  d=t2m(d); d=btoa(d); d=b32e(d);
-  return btoa(d);
-}
-function mcodeDecode(d){
-  d=atob(d); d=b32d(d); d=atob(d);
-  d=m2t(d); d=b32d(d); d=atob(d);
-  return m2t(d);
 }
 
-// ===== MAIN =====
-function encode(){
-  let p=password.value;
-  let d=input.value;
+// ================= SHORT ENCODE/DECODE =================
+function encodeShort(){
+  errorMsg.textContent="";
+  if(!input.value){ errorMsg.textContent="Input required"; return; }
+  const data=enc.encode(input.value);
+  output.value=M2+"."+b64url(b64e(data));
+  output.style.color="#0ff";
+}
 
-  d = mcodeEncode(d);
-
-  if(!p){
-    // EMPTY PASSWORD → Caesar +10
-    d = caesar(d,10);
-  } else {
-    // PASSWORD MODE
-    d = vigenere(d,p);
-    d = xorCipher(d,p);
-    d = shuffle(d);
+function decodeShort(){
+  errorMsg.textContent="";
+  if(!input.value){ errorMsg.textContent="Input required"; return; }
+  try{
+    const str=input.value.trim();
+    if(!str.startsWith(M2+'.')) throw 0;
+    const raw=b64urld(str.slice(M2.length+1));
+    output.value=dec.decode(raw);
+    output.style.color="#0ff";
+  }catch{
+    output.value="❌ INVALID DATA";
+    output.style.color="#ff5555";
   }
-
-  // ALWAYS at end
-  d = caesar(d,2);
-  d = caesar(d,3);
-
-  output.value = d;
 }
-
-function decode(){
-  let p=password.value;
-  let d=input.value;
-
-  // reverse end
-  d = caesar(d,-3);
-  d = caesar(d,-2);
-
-  if(!p){
-    d = caesar(d,-10);
-  } else {
-    d = unshuffle(d);
-    d = xorCipher(d,p);
-    d = vigenere(d,p,true);
-  }
-
-  d = mcodeDecode(d);
-  output.value = d; // wrong password → gibberish
-}
+</script>
 
