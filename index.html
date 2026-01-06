@@ -29,23 +29,8 @@ button { min-width:200px; padding:14px; border-radius:9999px; font-size:16px; fo
 button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
 #modeBtn span { display:inline-block; background: linear-gradient(to right, #fff 50%, #000 50%); -webkit-background-clip: text; background-clip:text; color:transparent; font-weight:bold; }
 #errorMsg { color:#ff5555; font-weight:700; text-align:center; font-family:monospace; margin-top:6px; }
-
-/* Updated Logout Button */
-.logout-btn { 
-  margin-top:10px; 
-  align-self:center; 
-  padding:8px 16px; 
-  border-radius:9999px; 
-  background:#fff; /* white background */
-  color:#000;      /* black text */
-  font-family:'Fira Mono',monospace; 
-  border:none; 
-  cursor:pointer; 
-  font-weight:700;
-}
-.logout-btn:hover { 
-  background:#ddd; /* slightly darker on hover */
-}
+.logout-btn { margin-top:10px; align-self:center; padding:8px 16px; border-radius:9999px; background:#fff; color:#000; font-family:'Fira Mono',monospace; border:none; cursor:pointer; font-weight:700; }
+.logout-btn:hover { background:#ddd; }
 </style>
 </head>
 <body>
@@ -75,7 +60,7 @@ button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
         <div class="password-safety-fill" id="passwordSafetyFill"></div>
       </div>
 
-      <textarea id="input" placeholder="Enter text here..." oninput="processText(); autoDecode();"></textarea>
+      <textarea id="input" placeholder="Enter text here..." oninput="processText();"></textarea>
 
       <div class="buttons">
         <button id="modeBtn" onclick="switchMode()">
@@ -193,29 +178,42 @@ function processText(){
   const passwordVal=password.value;
   const errorMsg=document.getElementById("errorMsg");
   if(!input){output.value=""; errorMsg.textContent=""; return;}
-  if(useEncrypt){
-    if(!passwordVal){errorMsg.textContent="Password required for AES!"; output.value=""; return;}
-    errorMsg.textContent="";
-    try{output.value="M2."+CryptoJS.AES.encrypt(input,passwordVal).toString();} 
-    catch(e){errorMsg.textContent="Encryption failed!"; output.value="";}
-  } else{
-    try{
+  
+  // If input starts with M2., decode instead of encrypting again
+  if(input.startsWith("M2.")) {
+    autoDecode(input);
+    return;
+  }
+
+  try{
+    if(useEncrypt){
+      if(!passwordVal){errorMsg.textContent="Password required for AES!"; output.value=""; return;}
+      output.value = "M2."+CryptoJS.AES.encrypt(input,passwordVal).toString();
+    } else {
       let encoded=rot13(input);
       if(passwordVal) encoded=btoa(xorEncode(encoded,passwordVal));
       encoded=caesarShift(encoded,8);
-      output.value="M2."+encoded;
-    } catch(e){errorMsg.textContent="Encoding failed!"; output.value="";}
+      output.value = "M2."+encoded;
+    }
+    errorMsg.textContent="";
+  } catch(e){
+    output.value="";
+    errorMsg.textContent="Processing failed!";
   }
 }
 
 // ------------------- AUTO DECODE -------------------
-function autoDecode() {
-  const inputVal = document.getElementById("input").value;
+function autoDecode(inputVal=null) {
+  const inputEl = document.getElementById("input");
+  const val = inputVal || inputEl.value;
   const output = document.getElementById("output");
   const passwordVal = password.value;
   const errorMsg = document.getElementById("errorMsg");
-  if(!inputVal.startsWith("M2.")) return; // Only decode if starts with M2.
-  let data = inputVal.slice(3);
+
+  if(!val.startsWith("M2.")) return;
+
+  let data = val.slice(3);
+
   try {
     if(useEncrypt){
       if(!passwordVal){errorMsg.textContent="Password needed for AES!"; return;}
@@ -226,10 +224,10 @@ function autoDecode() {
       if(passwordVal) data = xorEncode(atob(data),passwordVal);
       output.value = rot13(data);
     }
-    errorMsg.textContent = "";
+    errorMsg.textContent="";
   } catch(e){
     output.value = data;
-    errorMsg.textContent = "Decoded with fallback.";
+    errorMsg.textContent="Decoded with fallback.";
   }
 }
 </script>
