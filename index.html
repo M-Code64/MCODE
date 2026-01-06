@@ -1,1 +1,224 @@
-<script language=JavaScript> html='%3C%21DOCTYPE%20html%3E%0D%0A%3Chtml%20lang%3D%22en%22%3E%0D%0A%3Chead%3E%0D%0A%3Cmeta%20charset%3D%22UTF-8%22%3E%0D%0A%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1%22%3E%0D%0A%3Ctitle%3EM2.encrypt%3C%2Ftitle%3E%0D%0A%3Cstyle%3E%0D%0A%40import%20url%28%27https%3A%2F%2Ffonts.googleapis.com%2Fcss2%3Ffamily%3DFira%2BMono%26family%3DInter%26display%3Dswap%27%29%3B%0D%0A%2A%20%7B%20box-sizing%3Aborder-box%3B%20margin%3A0%3B%20padding%3A0%3B%20%7D%0D%0Abody%20%7B%20font-family%3A%27Inter%27%2Csystem-ui%3B%20background%3A%230b0b0b%3B%20color%3A%23fff%3B%20%7D%0D%0A%23main-content%20%7B%20display%3Ablock%3B%20%7D%0D%0Aheader%20%7B%20text-align%3Acenter%3B%20font-weight%3A900%3B%20font-size%3A3rem%3B%20padding%3A28px%200%3B%20color%3A%23fff%3B%20text-shadow%3A0%200%203px%20%23fff%2C0%200%206px%20%23fff%2C0%200%2010px%20%23fff%3B%20%7D%0D%0A.container%20%7B%20max-width%3A900px%3B%20margin%3A40px%20auto%3B%20padding%3A30px%3B%20background%3A%23111%3B%20border-radius%3A16px%3B%20display%3Aflex%3B%20flex-direction%3Acolumn%3B%20gap%3A20px%3B%20box-shadow%3A0%200%2015px%20rgba%28255%2C255%2C255%2C0.12%29%2C0%200%2030px%20rgba%28255%2C255%2C255%2C0.08%29%3B%20%7D%0D%0A.password-row%20%7B%20display%3Aflex%3B%20align-items%3Acenter%3B%20gap%3A16px%3B%20font-size%3A0.9rem%3B%20color%3A%23fff%3B%20position%3Arelative%3B%20%7D%0D%0A.password-row%20span%20%7B%20min-width%3A120px%3B%20%7D%0D%0A.password-row%20input%20%7B%20flex-grow%3A1%3B%20background%3A%23000%3B%20border%3A1.5px%20solid%20transparent%3B%20color%3A%23fff%3B%20padding%3A10px%2040px%2010px%2014px%3B%20border-radius%3A12px%3B%20font-family%3A%27Fira%20Mono%27%2Cmonospace%3B%20transition%3A%20all%200.3s%20ease%3B%20%7D%0D%0A.password-row%20input%3Ahover%2C%20.password-row%20input%3Afocus%20%7B%20border-color%3A%23fff%3B%20%7D%0D%0A.eye-wrapper%20%7B%20position%3Aabsolute%3B%20right%3A12px%3B%20top%3A50%25%3B%20transform%3AtranslateY%28-50%25%29%3B%20width%3A24px%3B%20height%3A24px%3B%20cursor%3Apointer%3B%20%7D%0D%0A.eye-wrapper%20img%20%7B%20width%3A100%25%3B%20height%3A100%25%3B%20display%3Ablock%3B%20%7D%0D%0A.eye-wrapper%20.eye-slash%20%7B%20position%3Aabsolute%3B%20top%3A50%25%3B%20left%3A-2px%3B%20width%3A28px%3B%20height%3A3px%3B%20background%3A%23fff%3B%20transform%3A%20rotate%2845deg%29%20translateY%28-50%25%29%3B%20transform-origin%3A%20center%3B%20pointer-events%3Anone%3B%20display%3Anone%3B%20border-radius%3A1px%3B%20%7D%0D%0A.password-safety-bar%20%7B%20height%3A6px%3B%20width%3A100%25%3B%20border-radius%3A4px%3B%20background%3A%23222%3B%20margin-top%3A4px%3B%20overflow%3Ahidden%3B%20%7D%0D%0A.password-safety-fill%20%7B%20height%3A100%25%3B%20width%3A0%25%3B%20background%3Ared%3B%20transition%3A%20width%200.3s%2C%20background%200.3s%3B%20%7D%0D%0Atextarea%20%7B%20width%3A100%25%3B%20height%3A180px%3B%20background%3A%23000%3B%20border%3A1.5px%20solid%20transparent%3B%20border-radius%3A14px%3B%20padding%3A18px%3B%20font-family%3A%27Fira%20Mono%27%2Cmonospace%3B%20color%3A%23fff%3B%20resize%3Anone%3B%20outline%3Anone%3B%20transition%3Aall%200.3s%20ease%3B%20%7D%0D%0Atextarea%3Ahover%2C%20textarea%3Afocus%20%7B%20border-color%3A%23fff%3B%20%7D%0D%0A.output-wrapper%20%7B%20position%3Arelative%3B%20%7D%0D%0A.copy-btn%20%7B%20position%3Aabsolute%3B%20top%3A12px%3B%20right%3A12px%3B%20width%3A24px%3B%20height%3A24px%3B%20cursor%3Apointer%3B%20%7D%0D%0A.buttons%20%7B%20display%3Aflex%3B%20justify-content%3Acenter%3B%20gap%3A20px%3B%20flex-wrap%3Awrap%3B%20margin-top%3A5px%3B%20%7D%0D%0Abutton%20%7B%20min-width%3A160px%3B%20padding%3A12px%3B%20border-radius%3A9999px%3B%20font-size%3A14px%3B%20font-weight%3A700%3B%20cursor%3Apointer%3B%20border%3A2px%20solid%20%23fff%3B%20position%3Arelative%3B%20overflow%3Ahidden%3B%20text-transform%3Auppercase%3B%20letter-spacing%3A0.1em%3B%20font-family%3A%27Fira%20Mono%27%2Cmonospace%3B%20transition%3A%20all%200.2s%20ease%3B%20%7D%0D%0A%23encryptBtn%20%7B%20background%3A%23000%3B%20color%3A%23fff%3B%20box-shadow%3A0%200%208px%20%23fff%3B%20%7D%0D%0A%23decryptBtn%20%7B%20background%3A%23fff%3B%20color%3A%23000%3B%20box-shadow%3A0%200%208px%20%23000%3B%20%7D%0D%0A%23modeBtn%20%7B%20margin-top%3A20px%3B%20background%3A%23f8f8f8%3B%20color%3A%23000%3B%20font-weight%3Abold%3B%20min-width%3A200px%3B%20text-align%3Acenter%3B%20border%3A2px%20solid%20%23fff%3B%20%7D%0D%0A%23downloadOtpBtn%2C%20%23downloadEccBtn%20%7B%20margin-top%3A6px%3B%20padding%3A8px%2012px%3B%20border-radius%3A8px%3B%20border%3Anone%3B%20cursor%3Apointer%3B%20background%3A%23222%3B%20color%3A%23fff%3B%20font-family%3A%27Fira%20Mono%27%2Cmonospace%3B%20%7D%0D%0A%23downloadOtpBtn%3Ahover%2C%20%23downloadEccBtn%3Ahover%20%7B%20background%3A%23555%3B%20%7D%0D%0A%23errorMsg%20%7B%20color%3A%23ff5555%3B%20font-weight%3A700%3B%20text-align%3Acenter%3B%20font-family%3Amonospace%3B%20margin-top%3A6px%3B%20%7D%0D%0A.logout-btn%20%7B%20margin-top%3A10px%3B%20align-self%3Aflex-end%3B%20padding%3A8px%2016px%3B%20border-radius%3A9999px%3B%20background%3A%23fff%3B%20color%3A%23000%3B%20font-family%3A%27Fira%20Mono%27%2Cmonospace%3B%20border%3Anone%3B%20cursor%3Apointer%3B%20font-weight%3A700%3B%20%7D%0D%0A.logout-btn%3Ahover%20%7B%20background%3A%23ddd%3B%20%7D%0D%0A.key-display%20%7B%20font-family%3A%27Fira%20Mono%27%2C%20monospace%3B%20font-size%3A0.9rem%3B%20background%3A%23222%3B%20padding%3A10px%3B%20border-radius%3A8px%3B%20margin-top%3A6px%3B%20word-break%3Abreak-all%3B%20white-space%3A%20pre-wrap%3B%7D%0D%0A.otp-warning%20%7B%20font-size%3A0.8rem%3B%20color%3A%23ff9999%3B%20margin-top%3A4px%3B%20font-family%3Amonospace%3B%20%7D%0D%0A%3C%2Fstyle%3E%0D%0A%3C%2Fhead%3E%0D%0A%3Cbody%3E%0D%0A%0D%0A%3Cdiv%20id%3D%22main-content%22%3E%0D%0A%20%20%3Cheader%3EM2.encrypt%3C%2Fheader%3E%0D%0A%20%20%3Cdiv%20class%3D%22container%22%3E%0D%0A%0D%0A%20%20%20%20%3Cdiv%20class%3D%22password-row%22%20id%3D%22entryGate%22%3E%0D%0A%20%20%20%20%20%20%3Cspan%3EENTER%20ACCESS%20CODE%3A%3C%2Fspan%3E%0D%0A%20%20%20%20%20%20%3Cinput%20type%3D%22password%22%20id%3D%22entryPassword%22%20placeholder%3D%22Type%20access%20code%22%20oninput%3D%22checkEntry%28%29%22%3E%0D%0A%20%20%20%20%3C%2Fdiv%3E%0D%0A%0D%0A%20%20%20%20%3Cdiv%20id%3D%22mainApp%22%20style%3D%22display%3Anone%3B%22%3E%0D%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22password-row%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Cspan%3EKey%2FPassword%3A%3C%2Fspan%3E%0D%0A%20%20%20%20%20%20%20%20%3Cinput%20type%3D%22password%22%20id%3D%22password%22%20placeholder%3D%22Enter%20Key%20or%20Password%21%22%20oninput%3D%22updatePasswordStrength%28%29%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22eye-wrapper%22%20id%3D%22eyeWrapper%22%20onclick%3D%22togglePass%28%29%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%3Cimg%20src%3D%22eye.svg%22%20alt%3D%22Eye%22%3E%0D%0A%20%20%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22eye-slash%22%20id%3D%22eyeSlash%22%3E%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22otp-warning%22%20id%3D%22otpWarning%22%3E%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22otpKeyDisplay%22%20class%3D%22key-display%22%3E%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22eccKeyDisplay%22%20class%3D%22key-display%22%3E%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3Cbutton%20id%3D%22downloadOtpBtn%22%20onclick%3D%22downloadOtpKey%28%29%22%20style%3D%22display%3Anone%3B%22%3EDownload%20OTP%20Key%3C%2Fbutton%3E%0D%0A%20%20%20%20%20%20%3Cbutton%20id%3D%22downloadEccBtn%22%20onclick%3D%22downloadEccKeys%28%29%22%20style%3D%22display%3Anone%3B%22%3EDownload%20ECC%20Keys%3C%2Fbutton%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22password-safety-bar%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22password-safety-fill%22%20id%3D%22passwordSafetyFill%22%3E%3C%2Fdiv%3E%0D%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Ctextarea%20id%3D%22input%22%20placeholder%3D%22Enter%20text%20here...%22%3E%3C%2Ftextarea%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22buttons%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22encryptBtn%22%20onclick%3D%22processText%28true%29%22%3EENCRYPT%3C%2Fbutton%3E%0D%0A%20%20%20%20%20%20%20%20%3Cbutton%20id%3D%22decryptBtn%22%20onclick%3D%22processText%28false%29%22%3EDECRYPT%3C%2Fbutton%3E%0D%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Cdiv%20class%3D%22output-wrapper%22%3E%0D%0A%20%20%20%20%20%20%20%20%3Ctextarea%20id%3D%22output%22%20placeholder%3D%22Output%20will%20appear%20here...%22%20readonly%3E%3C%2Ftextarea%3E%0D%0A%20%20%20%20%20%20%20%20%3Cimg%20class%3D%22copy-btn%22%20id%3D%22copyBtn%22%20src%3D%22copy.svg%22%20onclick%3D%22copyOutput%28%29%22%3E%0D%0A%20%20%20%20%20%20%3C%2Fdiv%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Cdiv%20id%3D%22errorMsg%22%3E%3C%2Fdiv%3E%0D%0A%0D%0A%20%20%20%20%20%20%3Cbutton%20id%3D%22modeBtn%22%20onclick%3D%22switchMode%28%29%22%3EMODE%3A%20M2.OTP%3C%2Fbutton%3E%0D%0A%20%20%20%20%20%20%3Cbutton%20class%3D%22logout-btn%22%20onclick%3D%22logout%28%29%22%3ELog%20Out%3C%2Fbutton%3E%0D%0A%20%20%20%20%3C%2Fdiv%3E%0D%0A%20%20%3C%2Fdiv%3E%0D%0A%3C%2Fdiv%3E%0D%0A%0D%0A%3Cscript%20src%3D%22https%3A%2F%2Fcdnjs.cloudflare.com%2Fajax%2Flibs%2Fcrypto-js%2F4.1.1%2Fcrypto-js.min.js%22%3E%3C%2Fscript%3E%0D%0A%3Cscript%3E%0D%0A%2F%2F%20---%20Local%20Storage%20---%0D%0Awindow.addEventListener%28%27DOMContentLoaded%27%2C%20%28%29%20%3D%3E%20%7B%0D%0A%20%20if%28localStorage.getItem%28%27verified%27%29%20%3D%3D%3D%20%27true%27%29%20%7B%0D%0A%20%20%20%20document.getElementById%28%22entryGate%22%29.style.display%20%3D%20%22none%22%3B%0D%0A%20%20%20%20document.getElementById%28%22mainApp%22%29.style.display%20%3D%20%22block%22%3B%0D%0A%20%20%7D%0D%0A%7D%29%3B%0D%0A%0D%0Afunction%20checkEntry%28%29%20%7B%0D%0A%20%20const%20val%20%3D%20document.getElementById%28%22entryPassword%22%29.value.toUpperCase%28%29%3B%0D%0A%20%20if%28val%20%3D%3D%3D%20%22M2%22%29%20%7B%0D%0A%20%20%20%20localStorage.setItem%28%27verified%27%2C%20%27true%27%29%3B%0D%0A%20%20%20%20document.getElementById%28%22entryGate%22%29.style.display%20%3D%20%22none%22%3B%0D%0A%20%20%20%20document.getElementById%28%22mainApp%22%29.style.display%20%3D%20%22block%22%3B%0D%0A%20%20%7D%0D%0A%7D%0D%0A%0D%0Afunction%20logout%28%29%20%7B%0D%0A%20%20localStorage.removeItem%28%27verified%27%29%3B%0D%0A%20%20document.getElementById%28%22entryGate%22%29.style.display%20%3D%20%22flex%22%3B%0D%0A%20%20document.getElementById%28%22mainApp%22%29.style.display%20%3D%20%22none%22%3B%0D%0A%20%20document.getElementById%28%22entryPassword%22%29.value%20%3D%20%22%22%3B%0D%0A%7D%0D%0A%0D%0Aconst%20password%20%3D%20document.getElementById%28%22password%22%29%3B%0D%0Aconst%20eyeSlash%20%3D%20document.getElementById%28%22eyeSlash%22%29%3B%0D%0Alet%20showing%20%3D%20false%3B%0D%0Afunction%20togglePass%28%29%20%7B%0D%0A%20%20showing%20%3D%20%21showing%3B%0D%0A%20%20password.type%20%3D%20showing%20%3F%20%22text%22%20%3A%20%22password%22%3B%0D%0A%20%20eyeSlash.style.display%20%3D%20showing%20%3F%20%22block%22%20%3A%20%22none%22%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20Password%20Strength%0D%0Aconst%20passwordStrengthFill%20%3D%20document.getElementById%28%22passwordSafetyFill%22%29%3B%0D%0Afunction%20updatePasswordStrength%28%29%20%7B%0D%0A%20%20const%20val%20%3D%20password.value%3B%0D%0A%20%20let%20score%20%3D%200%3B%0D%0A%20%20if%28val.length%20%3E%3D%208%29%20score%2B%2B%3B%0D%0A%20%20if%28%2F%5BA-Z%5D%2F.test%28val%29%29%20score%2B%2B%3B%0D%0A%20%20if%28%2F%5Ba-z%5D%2F.test%28val%29%29%20score%2B%2B%3B%0D%0A%20%20if%28%2F%5B0-9%5D%2F.test%28val%29%29%20score%2B%2B%3B%0D%0A%20%20if%28%2F%5B%5EA-Za-z0-9%5D%2F.test%28val%29%29%20score%2B%2B%3B%0D%0A%20%20let%20percent%20%3D%20%28score%2F5%29%2A100%3B%0D%0A%20%20passwordStrengthFill.style.width%20%3D%20percent%20%2B%20%22%25%22%3B%0D%0A%20%20passwordStrengthFill.style.background%20%3D%20score%3C%3D2%3F%22red%22%3Ascore%3C%3D4%3F%22orange%22%3A%22green%22%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20Copy%0D%0Afunction%20copyOutput%28%29%20%7B%0D%0A%20%20const%20output%20%3D%20document.getElementById%28%22output%22%29%3B%0D%0A%20%20if%28output.value%29%20navigator.clipboard.writeText%28output.value%29%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20---%20Modes%20---%0D%0Alet%20modes%20%3D%20%5B%22M2.OTP%22%2C%22M2.AES%22%2C%22M2.Crypt%22%2C%22M2.FREESTYLE%22%2C%22M2.ECC%22%5D%3B%0D%0Alet%20currentMode%20%3D%200%3B%0D%0Alet%20lastOtpKeyB64%20%3D%20%22%22%3B%0D%0Alet%20eccKeys%20%3D%20%7BpublicKey%3Anull%2C%20privateKey%3Anull%7D%3B%0D%0A%0D%0Afunction%20switchMode%28%29%20%7B%0D%0A%20%20currentMode%20%3D%20%28currentMode%2B1%29%25modes.length%3B%0D%0A%20%20const%20modeName%20%3D%20modes%5BcurrentMode%5D%3B%0D%0A%20%20document.getElementById%28%22modeBtn%22%29.textContent%20%3D%20%22MODE%3A%20%22%20%2B%20modeName%3B%0D%0A%20%20document.getElementById%28%22otpWarning%22%29.textContent%20%3D%0D%0A%20%20%20%20modeName%3D%3D%3D%22M2.OTP%22%20%3F%20%22OTP%20key%20will%20be%20auto-generated%20and%20displayed.%20Key%20must%20match%20message%20length%20for%20decryption.%22%20%3A%0D%0A%20%20%20%20modeName%3D%3D%3D%22M2.FREESTYLE%22%20%3F%20%22Freestyle%3A%20reversible%20encryption%20using%20password-seeded%20shuffle.%22%20%3A%0D%0A%20%20%20%20modeName%3D%3D%3D%22M2.ECC%22%20%3F%20%22ECC%3A%20generate%20public%2Fprivate%20key%20pair%20for%20encryption.%22%20%3A%20%22%22%3B%0D%0A%20%20document.getElementById%28%22otpKeyDisplay%22%29.textContent%3D%22%22%3B%0D%0A%20%20document.getElementById%28%22eccKeyDisplay%22%29.textContent%3D%22%22%3B%0D%0A%20%20document.getElementById%28%22downloadOtpBtn%22%29.style.display%20%3D%20%22none%22%3B%0D%0A%20%20document.getElementById%28%22downloadEccBtn%22%29.style.display%20%3D%20%22none%22%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20---%20OTP%20---%0D%0Afunction%20generateRandomKey%28length%29%20%7B%0D%0A%20%20const%20key%20%3D%20new%20Uint8Array%28length%29%3B%0D%0A%20%20crypto.getRandomValues%28key%29%3B%0D%0A%20%20return%20key%3B%0D%0A%7D%0D%0A%0D%0Aasync%20function%20otpEncrypt%28text%29%20%7B%0D%0A%20%20const%20enc%20%3D%20new%20TextEncoder%28%29%3B%0D%0A%20%20const%20msg%20%3D%20enc.encode%28text%29%3B%0D%0A%20%20const%20key%20%3D%20generateRandomKey%28msg.length%29%3B%0D%0A%20%20const%20cipher%20%3D%20new%20Uint8Array%28msg.length%29%3B%0D%0A%20%20for%28let%20i%3D0%3Bi%3Cmsg.length%3Bi%2B%2B%29%20cipher%5Bi%5D%20%3D%20msg%5Bi%5D%5Ekey%5Bi%5D%3B%0D%0A%20%20const%20cipherB64%20%3D%20btoa%28String.fromCharCode%28...cipher%29%29%3B%0D%0A%20%20const%20keyB64%20%3D%20btoa%28String.fromCharCode%28...key%29%29%3B%0D%0A%20%20lastOtpKeyB64%20%3D%20keyB64%3B%0D%0A%20%20document.getElementById%28%22otpKeyDisplay%22%29.textContent%20%3D%20%22OTP%20Key%20%28Base64%29%3A%20%22%2BkeyB64%3B%0D%0A%20%20document.getElementById%28%22downloadOtpBtn%22%29.style.display%20%3D%20%22inline-block%22%3B%0D%0A%20%20return%20%22M2.%22%2BcipherB64%3B%0D%0A%7D%0D%0A%0D%0Aasync%20function%20otpDecrypt%28data%2C%20keyText%29%20%7B%0D%0A%20%20const%20cipher%20%3D%20Uint8Array.from%28atob%28data.slice%283%29%29%2C%20c%3D%3Ec.charCodeAt%280%29%29%3B%0D%0A%20%20const%20key%20%3D%20Uint8Array.from%28atob%28keyText%29%2C%20c%3D%3Ec.charCodeAt%280%29%29%3B%0D%0A%20%20if%28key.length%20%21%3D%3D%20cipher.length%29%20throw%20new%20Error%28%22OTP%20key%20length%20must%20match%20ciphertext%20length%21%22%29%3B%0D%0A%20%20const%20plain%20%3D%20new%20Uint8Array%28cipher.length%29%3B%0D%0A%20%20for%28let%20i%3D0%3Bi%3Ccipher.length%3Bi%2B%2B%29%20plain%5Bi%5D%20%3D%20cipher%5Bi%5D%5Ekey%5Bi%5D%3B%0D%0A%20%20return%20new%20TextDecoder%28%29.decode%28plain%29%3B%0D%0A%7D%0D%0A%0D%0Afunction%20downloadOtpKey%28%29%20%7B%0D%0A%20%20if%28%21lastOtpKeyB64%29%20return%3B%0D%0A%20%20const%20blob%20%3D%20new%20Blob%28%5BlastOtpKeyB64%5D%2C%20%7Btype%3A%22text%2Fplain%22%7D%29%3B%0D%0A%20%20const%20a%20%3D%20document.createElement%28%22a%22%29%3B%0D%0A%20%20a.href%20%3D%20URL.createObjectURL%28blob%29%3B%0D%0A%20%20a.download%20%3D%20%22M2_OTP_Key.txt%22%3B%0D%0A%20%20a.click%28%29%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20---%20ECC%20---%0D%0Aasync%20function%20generateEccKeys%28%29%7B%0D%0A%20%20const%20keyPair%20%3D%20await%20crypto.subtle.generateKey%28%7Bname%3A%22ECDH%22%2C%20namedCurve%3A%22P-256%22%7D%2C%20true%2C%20%5B%22deriveKey%22%2C%22deriveBits%22%5D%29%3B%0D%0A%20%20eccKeys.publicKey%20%3D%20keyPair.publicKey%3B%0D%0A%20%20eccKeys.privateKey%20%3D%20keyPair.privateKey%3B%0D%0A%0D%0A%20%20const%20exportedPub%20%3D%20await%20crypto.subtle.exportKey%28%22spki%22%2C%20keyPair.publicKey%29%3B%0D%0A%20%20const%20exportedPriv%20%3D%20await%20crypto.subtle.exportKey%28%22pkcs8%22%2C%20keyPair.privateKey%29%3B%0D%0A%20%20const%20pubB64%20%3D%20btoa%28String.fromCharCode%28...new%20Uint8Array%28exportedPub%29%29%29%3B%0D%0A%20%20const%20privB64%20%3D%20btoa%28String.fromCharCode%28...new%20Uint8Array%28exportedPriv%29%29%29%3B%0D%0A%0D%0A%20%20document.getElementById%28%22eccKeyDisplay%22%29.textContent%20%3D%20%22Public%20Key%20%28Base64%29%3A%20%22%2BpubB64%2B%22nPrivate%20Key%20%28Base64%29%3A%20%22%2BprivB64%3B%0D%0A%20%20document.getElementById%28%22downloadEccBtn%22%29.style.display%3D%22inline-block%22%3B%0D%0A%7D%0D%0A%0D%0A%2F%2F%20TODO%3A%20Add%20ECC%20encrypt%2Fdecrypt%20here%20%28uses%20derived%20AES-GCM%20key%29%0D%0A%3C%2Fscript%3E%0D%0A%3C%2Fbody%3E%0D%0A%3C%2Fhtml%3E';d=unescape(html);document.write(d);</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M2.encrypt</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&display=swap');
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Inter',system-ui; background:#0b0b0b; color:#fff; }
+#main-content { display:block; }
+header { text-align:center; font-weight:900; font-size:3rem; padding:28px 0; color:#fff; text-shadow:0 0 3px #fff,0 0 6px #fff,0 0 10px #fff; }
+.container { max-width:900px; margin:40px auto; padding:30px; background:#111; border-radius:16px; display:flex; flex-direction:column; gap:20px; box-shadow:0 0 15px rgba(255,255,255,0.12),0 0 30px rgba(255,255,255,0.08); }
+.password-row { display:flex; align-items:center; gap:16px; font-size:0.9rem; color:#fff; position:relative; }
+.password-row span { min-width:120px; }
+.password-row input { flex-grow:1; background:#000; border:1.5px solid transparent; color:#fff; padding:10px 40px 10px 14px; border-radius:12px; font-family:'Fira Mono',monospace; transition: all 0.3s ease; }
+.password-row input:hover, .password-row input:focus { border-color:#fff; }
+.eye-wrapper { position:absolute; right:12px; top:50%; transform:translateY(-50%); width:24px; height:24px; cursor:pointer; }
+.eye-wrapper img { width:100%; height:100%; display:block; }
+.eye-wrapper .eye-slash { position:absolute; top:50%; left:-2px; width:28px; height:3px; background:#fff; transform: rotate(45deg) translateY(-50%); transform-origin: center; pointer-events:none; display:none; border-radius:1px; }
+.password-safety-bar { height:6px; width:100%; border-radius:4px; background:#222; margin-top:4px; overflow:hidden; }
+.password-safety-fill { height:100%; width:0%; background:red; transition: width 0.3s, background 0.3s; }
+textarea { width:100%; height:180px; background:#000; border:1.5px solid transparent; border-radius:14px; padding:18px; font-family:'Fira Mono',monospace; color:#fff; resize:none; outline:none; transition:all 0.3s ease; }
+textarea:hover, textarea:focus { border-color:#fff; }
+.output-wrapper { position:relative; }
+.copy-btn { position:absolute; top:12px; right:12px; width:24px; height:24px; cursor:pointer; }
+.buttons { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:5px; }
+button { min-width:160px; padding:12px; border-radius:9999px; font-size:14px; font-weight:700; cursor:pointer; border:2px solid #fff; position:relative; overflow:hidden; text-transform:uppercase; letter-spacing:0.1em; font-family:'Fira Mono',monospace; transition: all 0.2s ease; }
+#encryptBtn { background:#000; color:#fff; box-shadow:0 0 8px #fff; }
+#decryptBtn { background:#fff; color:#000; box-shadow:0 0 8px #000; }
+#modeBtn { margin-top:20px; background:#f8f8f8; color:#000; font-weight:bold; min-width:200px; text-align:center; border:2px solid #fff; }
+#downloadOtpBtn, #downloadEccBtn { margin-top:6px; padding:8px 12px; border-radius:8px; border:none; cursor:pointer; background:#222; color:#fff; font-family:'Fira Mono',monospace; }
+#downloadOtpBtn:hover, #downloadEccBtn:hover { background:#555; }
+#errorMsg { color:#ff5555; font-weight:700; text-align:center; font-family:monospace; margin-top:6px; }
+.logout-btn { margin-top:10px; align-self:flex-end; padding:8px 16px; border-radius:9999px; background:#fff; color:#000; font-family:'Fira Mono',monospace; border:none; cursor:pointer; font-weight:700; }
+.logout-btn:hover { background:#ddd; }
+.key-display { font-family:'Fira Mono', monospace; font-size:0.9rem; background:#222; padding:10px; border-radius:8px; margin-top:6px; word-break:break-all; white-space: pre-wrap;}
+.otp-warning { font-size:0.8rem; color:#ff9999; margin-top:4px; font-family:monospace; }
+</style>
+</head>
+<body>
+
+<div id="main-content">
+  <header>M2.encrypt</header>
+  <div class="container">
+
+    <div class="password-row" id="entryGate">
+      <span>ENTER ACCESS CODE:</span>
+      <input type="password" id="entryPassword" placeholder="Type access code" oninput="checkEntry()">
+    </div>
+
+    <div id="mainApp" style="display:none;">
+      <div class="password-row">
+        <span>Key/Password:</span>
+        <input type="password" id="password" placeholder="Enter Key or Password!" oninput="updatePasswordStrength()">
+        <div class="eye-wrapper" id="eyeWrapper" onclick="togglePass()">
+          <img src="eye.svg" alt="Eye">
+          <div class="eye-slash" id="eyeSlash"></div>
+        </div>
+      </div>
+      <div class="otp-warning" id="otpWarning"></div>
+      <div id="otpKeyDisplay" class="key-display"></div>
+      <div id="eccKeyDisplay" class="key-display"></div>
+      <button id="downloadOtpBtn" onclick="downloadOtpKey()" style="display:none;">Download OTP Key</button>
+      <button id="downloadEccBtn" onclick="downloadEccKeys()" style="display:none;">Download ECC Keys</button>
+
+      <div class="password-safety-bar">
+        <div class="password-safety-fill" id="passwordSafetyFill"></div>
+      </div>
+
+      <textarea id="input" placeholder="Enter text here..."></textarea>
+
+      <div class="buttons">
+        <button id="encryptBtn" onclick="processText(true)">ENCRYPT</button>
+        <button id="decryptBtn" onclick="processText(false)">DECRYPT</button>
+      </div>
+
+      <div class="output-wrapper">
+        <textarea id="output" placeholder="Output will appear here..." readonly></textarea>
+        <img class="copy-btn" id="copyBtn" src="copy.svg" onclick="copyOutput()">
+      </div>
+
+      <div id="errorMsg"></div>
+
+      <button id="modeBtn" onclick="switchMode()">MODE: M2.OTP</button>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script>
+// --- Local Storage ---
+window.addEventListener('DOMContentLoaded', () => {
+  if(localStorage.getItem('verified') === 'true') {
+    document.getElementById("entryGate").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+  }
+});
+
+function checkEntry() {
+  const val = document.getElementById("entryPassword").value.toUpperCase();
+  if(val === "M2") {
+    localStorage.setItem('verified', 'true');
+    document.getElementById("entryGate").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+  }
+}
+
+function logout() {
+  localStorage.removeItem('verified');
+  document.getElementById("entryGate").style.display = "flex";
+  document.getElementById("mainApp").style.display = "none";
+  document.getElementById("entryPassword").value = "";
+}
+
+const password = document.getElementById("password");
+const eyeSlash = document.getElementById("eyeSlash");
+let showing = false;
+function togglePass() {
+  showing = !showing;
+  password.type = showing ? "text" : "password";
+  eyeSlash.style.display = showing ? "block" : "none";
+}
+
+// Password Strength
+const passwordStrengthFill = document.getElementById("passwordSafetyFill");
+function updatePasswordStrength() {
+  const val = password.value;
+  let score = 0;
+  if(val.length >= 8) score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[a-z]/.test(val)) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  let percent = (score/5)*100;
+  passwordStrengthFill.style.width = percent + "%";
+  passwordStrengthFill.style.background = score<=2?"red":score<=4?"orange":"green";
+}
+
+// Copy
+function copyOutput() {
+  const output = document.getElementById("output");
+  if(output.value) navigator.clipboard.writeText(output.value);
+}
+
+// --- Modes ---
+let modes = ["M2.OTP","M2.AES","M2.Crypt","M2.FREESTYLE","M2.ECC"];
+let currentMode = 0;
+let lastOtpKeyB64 = "";
+let eccKeys = {publicKey:null, privateKey:null};
+
+function switchMode() {
+  currentMode = (currentMode+1)%modes.length;
+  const modeName = modes[currentMode];
+  document.getElementById("modeBtn").textContent = "MODE: " + modeName;
+  document.getElementById("otpWarning").textContent =
+    modeName==="M2.OTP" ? "OTP key will be auto-generated and displayed. Key must match message length for decryption." :
+    modeName==="M2.FREESTYLE" ? "Freestyle: reversible encryption using password-seeded shuffle." :
+    modeName==="M2.ECC" ? "ECC: generate public/private key pair for encryption." : "";
+  document.getElementById("otpKeyDisplay").textContent="";
+  document.getElementById("eccKeyDisplay").textContent="";
+  document.getElementById("downloadOtpBtn").style.display = "none";
+  document.getElementById("downloadEccBtn").style.display = "none";
+}
+
+// --- OTP ---
+function generateRandomKey(length) {
+  const key = new Uint8Array(length);
+  crypto.getRandomValues(key);
+  return key;
+}
+
+async function otpEncrypt(text) {
+  const enc = new TextEncoder();
+  const msg = enc.encode(text);
+  const key = generateRandomKey(msg.length);
+  const cipher = new Uint8Array(msg.length);
+  for(let i=0;i<msg.length;i++) cipher[i] = msg[i]^key[i];
+  const cipherB64 = btoa(String.fromCharCode(...cipher));
+  const keyB64 = btoa(String.fromCharCode(...key));
+  lastOtpKeyB64 = keyB64;
+  document.getElementById("otpKeyDisplay").textContent = "OTP Key (Base64): "+keyB64;
+  document.getElementById("downloadOtpBtn").style.display = "inline-block";
+  return "M2."+cipherB64;
+}
+
+async function otpDecrypt(data, keyText) {
+  const cipher = Uint8Array.from(atob(data.slice(3)), c=>c.charCodeAt(0));
+  const key = Uint8Array.from(atob(keyText), c=>c.charCodeAt(0));
+  if(key.length !== cipher.length) throw new Error("OTP key length must match ciphertext length!");
+  const plain = new Uint8Array(cipher.length);
+  for(let i=0;i<cipher.length;i++) plain[i] = cipher[i]^key[i];
+  return new TextDecoder().decode(plain);
+}
+
+function downloadOtpKey() {
+  if(!lastOtpKeyB64) return;
+  const blob = new Blob([lastOtpKeyB64], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "M2_OTP_Key.txt";
+  a.click();
+}
+
+// --- ECC ---
+async function generateEccKeys(){
+  const keyPair = await crypto.subtle.generateKey({name:"ECDH", namedCurve:"P-256"}, true, ["deriveKey","deriveBits"]);
+  eccKeys.publicKey = keyPair.publicKey;
+  eccKeys.privateKey = keyPair.privateKey;
+
+  const exportedPub = await crypto.subtle.exportKey("spki", keyPair.publicKey);
+  const exportedPriv = await crypto.subtle.exportKey("pkcs8", keyPair.privateKey);
+  const pubB64 = btoa(String.fromCharCode(...new Uint8Array(exportedPub)));
+  const privB64 = btoa(String.fromCharCode(...new Uint8Array(exportedPriv)));
+
+  document.getElementById("eccKeyDisplay").textContent = "Public Key (Base64): "+pubB64+"\nPrivate Key (Base64): "+privB64;
+  document.getElementById("downloadEccBtn").style.display="inline-block";
+}
+
+// TODO: Add ECC encrypt/decrypt here (uses derived AES-GCM key)
+</script>
+</body>
+</html>
