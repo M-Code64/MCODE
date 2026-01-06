@@ -29,6 +29,23 @@ button { min-width:200px; padding:14px; border-radius:9999px; font-size:16px; fo
 button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
 #modeBtn span { display:inline-block; background: linear-gradient(to right, #fff 50%, #000 50%); -webkit-background-clip: text; background-clip:text; color:transparent; font-weight:bold; }
 #errorMsg { color:#ff5555; font-weight:700; text-align:center; font-family:monospace; margin-top:6px; }
+
+/* Updated Logout Button */
+.logout-btn { 
+  margin-top:10px; 
+  align-self:center; 
+  padding:8px 16px; 
+  border-radius:9999px; 
+  background:#fff; /* white background */
+  color:#000;      /* black text */
+  font-family:'Fira Mono',monospace; 
+  border:none; 
+  cursor:pointer; 
+  font-weight:700;
+}
+.logout-btn:hover { 
+  background:#ddd; /* slightly darker on hover */
+}
 </style>
 </head>
 <body>
@@ -72,6 +89,7 @@ button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
       </div>
 
       <div id="errorMsg"></div>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
     </div>
 
   </div>
@@ -79,16 +97,33 @@ button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script>
+// ------------------- LOCAL STORAGE CHECK -------------------
+window.addEventListener('DOMContentLoaded', () => {
+  if(localStorage.getItem('verified') === 'true') {
+    document.getElementById("entryGate").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+  }
+});
+
 // ENTRY CHECK
 function checkEntry() {
   const val = document.getElementById("entryPassword").value.toUpperCase();
   if(val === "M2") {
+    localStorage.setItem('verified', 'true'); // store verification
     document.getElementById("entryGate").style.display = "none";
     document.getElementById("mainApp").style.display = "block";
   }
 }
 
-// PASSWORD TOGGLE
+// LOGOUT (CLEAR VERIFIED)
+function logout() {
+  localStorage.removeItem('verified');
+  document.getElementById("entryGate").style.display = "flex";
+  document.getElementById("mainApp").style.display = "none";
+  document.getElementById("entryPassword").value = "";
+}
+
+// ------------------- PASSWORD TOGGLE -------------------
 const password = document.getElementById("password");
 const eyeSlash = document.getElementById("eyeSlash");
 let showing = false;
@@ -98,7 +133,7 @@ function togglePass() {
   eyeSlash.style.display = showing ? "block" : "none";
 }
 
-// PASSWORD STRENGTH
+// ------------------- PASSWORD STRENGTH -------------------
 const passwordStrengthFill = document.getElementById("passwordSafetyFill");
 function updatePasswordStrength() {
   const val = password.value;
@@ -115,13 +150,13 @@ function updatePasswordStrength() {
   else passwordStrengthFill.style.background = "green";
 }
 
-// COPY OUTPUT
+// ------------------- COPY OUTPUT -------------------
 function copyOutput() {
   const output = document.getElementById("output");
   if(output.value) navigator.clipboard.writeText(output.value);
 }
 
-// MODE BUTTON
+// ------------------- MODE BUTTON -------------------
 let useEncrypt = true;
 function switchMode() {
   useEncrypt = !useEncrypt;
@@ -129,7 +164,7 @@ function switchMode() {
   processText();
 }
 
-// ROT13
+// ------------------- ROT13 -------------------
 function rot13(str) {
   return str.replace(/[A-Za-z]/g, c=>{
     return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".charAt(
@@ -138,20 +173,20 @@ function rot13(str) {
   });
 }
 
-// CAESAR CIPHER SHIFT 8
+// ------------------- CAESAR SHIFT -------------------
 function caesarShift(str, shift) {
   return str.split('').map(c=>String.fromCharCode(c.charCodeAt(0)+shift)).join('');
 }
 function caesarUnshift(str, shift){return caesarShift(str,-shift);}
 
-// XOR
+// ------------------- XOR -------------------
 function xorEncode(str,key){
   let result='';
   for(let i=0;i<str.length;i++){result+=String.fromCharCode(str.charCodeAt(i)^key.charCodeAt(i%key.length));}
   return result;
 }
 
-// PROCESS TEXT
+// ------------------- PROCESS TEXT -------------------
 function processText(){
   const input=document.getElementById("input").value;
   const output=document.getElementById("output");
@@ -173,7 +208,7 @@ function processText(){
   }
 }
 
-// AUTO DECODE ON M2. PREFIX
+// ------------------- AUTO DECODE -------------------
 function autoDecode() {
   const inputVal = document.getElementById("input").value;
   const output = document.getElementById("output");
