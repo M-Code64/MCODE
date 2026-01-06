@@ -6,89 +6,28 @@
 <title>M2.encrypt</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&display=swap');
-
 * { box-sizing: border-box; margin:0; padding:0; }
 body { font-family:'Inter',system-ui; background:#0b0b0b; color:#fff; }
-
 #main-content { display:block; }
 header { text-align:center; font-weight:900; font-size:3rem; padding:28px 0; color:#fff; text-shadow:0 0 3px #fff,0 0 6px #fff,0 0 10px #fff; }
-
-.container {
-  max-width:900px; margin:40px auto; padding:30px; background:#111;
-  border-radius:16px; display:flex; flex-direction:column; gap:20px;
-  box-shadow:0 0 15px rgba(255,255,255,0.12),0 0 30px rgba(255,255,255,0.08);
-}
-
-/* PASSWORD ROW */
+.container { max-width:900px; margin:40px auto; padding:30px; background:#111; border-radius:16px; display:flex; flex-direction:column; gap:20px; box-shadow:0 0 15px rgba(255,255,255,0.12),0 0 30px rgba(255,255,255,0.08); }
 .password-row { display:flex; align-items:center; gap:16px; font-size:0.9rem; color:#fff; position:relative; }
 .password-row span { min-width:120px; }
-.password-row input {
-  flex-grow:1; background:#000; border:1.5px solid transparent; color:#fff;
-  padding:10px 40px 10px 14px; border-radius:12px; font-family:'Fira Mono',monospace;
-  transition: all 0.3s ease;
-}
-.password-row input:hover,
-.password-row input:focus { border-color:#fff; }
-
-/* Eye inside input */
-.eye-wrapper {
-  position:absolute; right:12px; top:50%; transform:translateY(-50%);
-  width:24px; height:24px; cursor:pointer;
-}
-.eye-wrapper img {
-  width:100%; height:100%;
-  display:block;
-}
-.eye-wrapper .eye-slash {
-  position:absolute;
-  top:50%; left:-2px; width:28px; height:3px;
-  background:#fff;  /* white slash */
-  transform: rotate(45deg) translateY(-50%);
-  transform-origin: center;
-  pointer-events:none;
-  display:none;
-  border-radius:1px;
-}
-
-/* PASSWORD STRENGTH */
-.password-safety-bar {
-  height:6px; width:100%; border-radius:4px; background:#222; margin-top:4px;
-  overflow:hidden;
-}
-.password-safety-fill {
-  height:100%; width:0%; background:red; transition: width 0.3s, background 0.3s;
-}
-
-/* TEXTAREAS */
-textarea {
-  width:100%; height:180px; background:#000; border:1.5px solid transparent;
-  border-radius:14px; padding:18px; font-family:'Fira Mono',monospace;
-  color:#fff; resize:vertical; outline:none; transition:all 0.3s ease;
-}
+.password-row input { flex-grow:1; background:#000; border:1.5px solid transparent; color:#fff; padding:10px 40px 10px 14px; border-radius:12px; font-family:'Fira Mono',monospace; transition: all 0.3s ease; }
+.password-row input:hover, .password-row input:focus { border-color:#fff; }
+.eye-wrapper { position:absolute; right:12px; top:50%; transform:translateY(-50%); width:24px; height:24px; cursor:pointer; }
+.eye-wrapper img { width:100%; height:100%; display:block; }
+.eye-wrapper .eye-slash { position:absolute; top:50%; left:-2px; width:28px; height:3px; background:#fff; transform: rotate(45deg) translateY(-50%); transform-origin: center; pointer-events:none; display:none; border-radius:1px; }
+.password-safety-bar { height:6px; width:100%; border-radius:4px; background:#222; margin-top:4px; overflow:hidden; }
+.password-safety-fill { height:100%; width:0%; background:red; transition: width 0.3s, background 0.3s; }
+textarea { width:100%; height:180px; background:#000; border:1.5px solid transparent; border-radius:14px; padding:18px; font-family:'Fira Mono',monospace; color:#fff; resize:vertical; outline:none; transition:all 0.3s ease; }
 textarea:hover, textarea:focus { border-color:#fff; }
-
 .output-wrapper { position:relative; }
-.copy-btn {
-  position:absolute; top:12px; right:12px;
-  width:24px; height:24px; cursor:pointer;
-}
-
-/* BUTTONS */
+.copy-btn { position:absolute; top:12px; right:12px; width:24px; height:24px; cursor:pointer; }
 .buttons { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:5px; }
-button {
-  min-width:160px; padding:14px; border-radius:9999px; font-size:16px;
-  font-weight:700; cursor:pointer; border:2px solid #fff; position:relative;
-  overflow:hidden; text-transform:uppercase; letter-spacing:0.1em;
-  font-family:'Fira Mono',monospace; background: linear-gradient(to right, #000 50%, #fff 50%);
-  color: transparent;
-  box-shadow:0 0 6px #fff, 0 0 12px #fff inset;
-  transition: box-shadow 0.2s ease;
-}
+button { min-width:200px; padding:14px; border-radius:9999px; font-size:16px; font-weight:700; cursor:pointer; border:2px solid #fff; position:relative; overflow:hidden; text-transform:uppercase; letter-spacing:0.1em; font-family:'Fira Mono',monospace; background: linear-gradient(to right, #000 50%, #fff 50%); color: transparent; box-shadow:0 0 6px #fff, 0 0 12px #fff inset; transition: box-shadow 0.2s ease; }
 button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
-#modeBtn span {
-  display:inline-block; background: linear-gradient(to right, #fff 50%, #000 50%);
-  -webkit-background-clip: text; background-clip:text; color:transparent; font-weight:bold;
-}
+#modeBtn span { display:inline-block; background: linear-gradient(to right, #fff 50%, #000 50%); -webkit-background-clip: text; background-clip:text; color:transparent; font-weight:bold; }
 #errorMsg { color:#ff5555; font-weight:700; text-align:center; font-family:monospace; margin-top:6px; }
 </style>
 </head>
@@ -98,45 +37,61 @@ button:hover { box-shadow:0 0 12px #fff, 0 0 24px #fff inset; }
   <header>M2.encrypt</header>
   <div class="container">
 
-    <div class="password-row">
-      <span>Password:</span>
-      <input type="password" id="password" placeholder="Enter Password Here!" oninput="updatePasswordStrength()">
-      <!-- Eye icon wrapper -->
-      <div class="eye-wrapper" id="eyeWrapper" onclick="togglePass()">
-        <img src="eye.svg" alt="Eye">
-        <div class="eye-slash" id="eyeSlash"></div>
+    <!-- Entry Gate -->
+    <div class="password-row" id="entryGate">
+      <span>ENTER ACCESS CODE:</span>
+      <input type="password" id="entryPassword" placeholder="Type access code" oninput="checkEntry()">
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display:none;">
+      <div class="password-row">
+        <span>Password:</span>
+        <input type="password" id="password" placeholder="Enter Password Here!" oninput="updatePasswordStrength(); processText();">
+        <div class="eye-wrapper" id="eyeWrapper" onclick="togglePass()">
+          <img src="eye.svg" alt="Eye">
+          <div class="eye-slash" id="eyeSlash"></div>
+        </div>
       </div>
+
+      <div class="password-safety-bar">
+        <div class="password-safety-fill" id="passwordSafetyFill"></div>
+      </div>
+
+      <textarea id="input" placeholder="Enter text here..." oninput="processText(); autoDecode();"></textarea>
+
+      <div class="buttons">
+        <button id="modeBtn" onclick="switchMode()">
+          <span>MODE: M2.ENCRYPT</span>
+        </button>
+      </div>
+
+      <div class="output-wrapper">
+        <textarea id="output" placeholder="Output will appear here..." readonly></textarea>
+        <img class="copy-btn" id="copyBtn" src="copy.svg" onclick="copyOutput()">
+      </div>
+
+      <div id="errorMsg"></div>
     </div>
-
-    <div class="password-safety-bar">
-      <div class="password-safety-fill" id="passwordSafetyFill"></div>
-    </div>
-
-    <textarea id="input" placeholder="Enter text here..."></textarea>
-
-    <div class="buttons">
-      <button id="modeBtn" onclick="switchMode()">
-        <span>MODE: M2.ENCRYPT</span>
-      </button>
-    </div>
-
-    <div class="output-wrapper">
-      <textarea id="output" placeholder="Output will appear here..." readonly></textarea>
-      <!-- Clipboard icon -->
-      <img class="copy-btn" id="copyBtn" src="copy.svg" onclick="copyOutput()">
-    </div>
-
-    <div id="errorMsg"></div>
 
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script>
+// ENTRY CHECK
+function checkEntry() {
+  const val = document.getElementById("entryPassword").value.toUpperCase();
+  if(val === "M2") {
+    document.getElementById("entryGate").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+  }
+}
+
 // PASSWORD TOGGLE
 const password = document.getElementById("password");
 const eyeSlash = document.getElementById("eyeSlash");
 let showing = false;
-
 function togglePass() {
   showing = !showing;
   password.type = showing ? "text" : "password";
@@ -171,8 +126,77 @@ let useEncrypt = true;
 function switchMode() {
   useEncrypt = !useEncrypt;
   document.querySelector("#modeBtn span").textContent = useEncrypt ? "MODE: M2.ENCRYPT" : "MODE: M2.ENCODE";
+  processText();
+}
+
+// ROT13
+function rot13(str) {
+  return str.replace(/[A-Za-z]/g, c=>{
+    return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".charAt(
+      "NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm".indexOf(c)
+    );
+  });
+}
+
+// CAESAR CIPHER SHIFT 8
+function caesarShift(str, shift) {
+  return str.split('').map(c=>String.fromCharCode(c.charCodeAt(0)+shift)).join('');
+}
+function caesarUnshift(str, shift){return caesarShift(str,-shift);}
+
+// XOR
+function xorEncode(str,key){
+  let result='';
+  for(let i=0;i<str.length;i++){result+=String.fromCharCode(str.charCodeAt(i)^key.charCodeAt(i%key.length));}
+  return result;
+}
+
+// PROCESS TEXT
+function processText(){
+  const input=document.getElementById("input").value;
+  const output=document.getElementById("output");
+  const passwordVal=password.value;
+  const errorMsg=document.getElementById("errorMsg");
+  if(!input){output.value=""; errorMsg.textContent=""; return;}
+  if(useEncrypt){
+    if(!passwordVal){errorMsg.textContent="Password required for AES!"; output.value=""; return;}
+    errorMsg.textContent="";
+    try{output.value="M2."+CryptoJS.AES.encrypt(input,passwordVal).toString();} 
+    catch(e){errorMsg.textContent="Encryption failed!"; output.value="";}
+  } else{
+    try{
+      let encoded=rot13(input);
+      if(passwordVal) encoded=btoa(xorEncode(encoded,passwordVal));
+      encoded=caesarShift(encoded,8);
+      output.value="M2."+encoded;
+    } catch(e){errorMsg.textContent="Encoding failed!"; output.value="";}
+  }
+}
+
+// AUTO DECODE ON M2. PREFIX
+function autoDecode() {
+  const inputVal = document.getElementById("input").value;
+  const output = document.getElementById("output");
+  const passwordVal = password.value;
+  const errorMsg = document.getElementById("errorMsg");
+  if(!inputVal.startsWith("M2.")) return; // Only decode if starts with M2.
+  let data = inputVal.slice(3);
+  try {
+    if(useEncrypt){
+      if(!passwordVal){errorMsg.textContent="Password needed for AES!"; return;}
+      const decrypted = CryptoJS.AES.decrypt(data,passwordVal).toString(CryptoJS.enc.Utf8);
+      output.value = decrypted;
+    } else {
+      data = caesarUnshift(data,8);
+      if(passwordVal) data = xorEncode(atob(data),passwordVal);
+      output.value = rot13(data);
+    }
+    errorMsg.textContent = "";
+  } catch(e){
+    output.value = data;
+    errorMsg.textContent = "Decoded with fallback.";
+  }
 }
 </script>
-
 </body>
 </html>
